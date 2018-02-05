@@ -312,6 +312,9 @@ func (s *storageImageDestination) ReapplyBlob(blobinfo types.BlobInfo) (types.Bl
 	if layerList, ok := s.Layers[blobinfo.Digest]; !ok || len(layerList) < 1 {
 		b, err := s.imageRef.transport.store.ImageBigData(s.ID, blobinfo.Digest.String())
 		if err != nil {
+			if blob, ok := s.BlobData[blobinfo.Digest]; ok {
+				return types.BlobInfo{Digest: blobinfo.Digest, Size: int64(len(blob))}, nil
+			}
 			return types.BlobInfo{}, err
 		}
 		return types.BlobInfo{Digest: blobinfo.Digest, Size: int64(len(b))}, nil
