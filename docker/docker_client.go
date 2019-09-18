@@ -311,11 +311,7 @@ func (c *dockerClient) getBearerToken(ctx context.Context, realm, service, scope
 	if c.username != "" && c.password != "" {
 		authReq.SetBasicAuth(c.username, c.password)
 	}
-	tr := tlsclientconfig.NewTransport()
-	// TODO(runcom): insecure for now to contact the external token service
-	tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-	client := &http.Client{Transport: tr}
-	res, err := client.Do(authReq)
+	res, err := c.client.Do(authReq)
 	if err != nil {
 		return nil, err
 	}
